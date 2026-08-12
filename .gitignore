@@ -4,6 +4,7 @@ dist/
 vite.config.js
 vite.config.d.ts
 supabase/.temp/
+.netlify/
 .env
 .env.local
 .env.*.local
