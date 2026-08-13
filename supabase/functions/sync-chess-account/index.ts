@@ -48,5 +48,5 @@ Deno.serve(async request => {
     await admin.from('chess_accounts').update({ last_sync_at: completedAt }).eq('id', accountId)
     await admin.from('sync_runs').update({ status: 'completed', finished_at: completedAt, games_found: games.length, games_imported: imported, games_skipped: games.length - imported }).eq('id', runId)
     return Response.json({ runId, found: games.length, imported, skipped: games.length - imported }, { headers: cors })
-  } catch (_error) { const message = messageFor(stage); console.error(`sync-chess-account failed at ${stage}`); if (admin && runId) await admin.from('sync_runs').update({ status: 'failed', finished_at: new Date().toISOString(), error_message: message }).eq('id', runId); return Response.json({ error: message }, { status: 500, headers: cors }) }
+  } catch (_error) { const message = messageFor(stage); const error = _error as { code?: string; message?: string; details?: string; hint?: string }; console.error(JSON.stringify({ stage, code: error.code ?? null, message: error.message ?? null, details: error.details ?? null, hint: error.hint ?? null })); if (admin && runId) await admin.from('sync_runs').update({ status: 'failed', finished_at: new Date().toISOString(), error_message: message }).eq('id', runId); return Response.json({ error: message }, { status: 500, headers: cors }) }
 })
