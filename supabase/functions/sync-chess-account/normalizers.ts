@@ -21,5 +21,8 @@ export function lichessPageUrl(username: string, options: { until?: number; sinc
 
 export function nextLichessBackfillState(received: number, oldest: number | undefined) {
   const hasMore = received === lichessPageSize && typeof oldest === 'number' && Number.isFinite(oldest)
-  return { hasMore, backfillComplete: !hasMore, until: hasMore ? oldest - 1 : null }
+  // Keep the boundary timestamp in the next request. Lichess can assign the
+  // same lastMoveAt millisecond to multiple games; the unique game identity
+  // safely absorbs this one-record overlap without skipping siblings.
+  return { hasMore, backfillComplete: !hasMore, until: hasMore ? oldest : null }
 }
