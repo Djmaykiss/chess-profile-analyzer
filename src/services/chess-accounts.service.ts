@@ -3,7 +3,7 @@ import { verifyChessAccount } from './chess-platforms/chess-verification.service
 import { AccountRatings, PlatformVerificationError, VerificationStatus } from './chess-platforms/types'
 
 export type Platform = 'lichess' | 'chesscom'
-export type ChessAccount = { id: string; profile_id: string; platform: Platform; username: string; platform_user_id: string | null; profile_url: string | null; is_active: boolean; last_sync_at: string | null; verification_status: VerificationStatus; verified_at: string | null; verification_error: string | null; rating_bullet: number | null; rating_blitz: number | null; rating_rapid: number | null; rating_classical: number | null; created_at: string; updated_at: string }
+export type ChessAccount = { id: string; profile_id: string; platform: Platform; username: string; platform_user_id: string | null; profile_url: string | null; is_active: boolean; last_sync_at: string | null; lichess_backfill_until: number | null; lichess_backfill_complete: boolean; lichess_backfill_updated_at: string | null; verification_status: VerificationStatus; verified_at: string | null; verification_error: string | null; rating_bullet: number | null; rating_blitz: number | null; rating_rapid: number | null; rating_classical: number | null; created_at: string; updated_at: string }
 export type ChessAccountInput = Pick<ChessAccount, 'profile_id' | 'platform' | 'username'>
 export type ChessAccountVerification = Pick<ChessAccount, 'username' | 'platform_user_id' | 'profile_url' | 'verification_status' | 'verified_at' | 'verification_error' | 'rating_bullet' | 'rating_blitz' | 'rating_rapid' | 'rating_classical'>
 

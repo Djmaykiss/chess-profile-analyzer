@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { externalIdentity, normalizedResult, playerColor, safeImportError, shouldRetry } from '../src/services/chess-import/normalizers.ts'
-import { playedAt, splitNdjson } from '../supabase/functions/sync-chess-account/normalizers.ts'
+import { lichessPageSize, lichessPageUrl, nextLichessBackfillState, playedAt, splitNdjson } from '../supabase/functions/sync-chess-account/normalizers.ts'
 
 assert.equal(playerColor('Player', 'player'), 'white')
 assert.equal(playerColor('Player', 'Opponent'), 'black')
@@ -20,6 +20,12 @@ assert.equal(shouldRetry(404), false)
 assert.equal(playedAt({ end_time: 1750000000 }, {}), '2025-06-15T15:06:40.000Z', 'Chess.com end_time uses Unix seconds, not milliseconds')
 assert.deepEqual(splitNdjson('{"id":"one"}\n{"id":"two"', ''), { complete: ['{"id":"one"}'], remainder: '{"id":"two"' }, 'Lichess NDJSON chunks retain incomplete trailing rows')
 assert.deepEqual(splitNdjson('}\n', '{"id":"two"'), { complete: ['{"id":"two"}'], remainder: '' }, 'Lichess NDJSON chunks reconstruct split rows')
+assert.equal(lichessPageSize, 500, 'Lichess pagination is bounded per execution')
+assert.match(lichessPageUrl('Player Name', { until: 1234 }), /max=500.*until=1234/, 'backfill requests resume from the persisted until cursor')
+assert.match(lichessPageUrl('Player Name', { since: 5678 }), /max=500.*since=5678/, 'completed backfills use incremental since requests')
+assert.deepEqual(nextLichessBackfillState(500, 1720000000000), { hasMore: true, backfillComplete: false, until: 1719999999999 }, 'a full page persists a cursor immediately before its oldest game')
+assert.deepEqual(nextLichessBackfillState(0, undefined), { hasMore: false, backfillComplete: true, until: null }, 'an empty page closes the historical backfill')
+assert.deepEqual(nextLichessBackfillState(137, 1720000000000), { hasMore: false, backfillComplete: true, until: null }, 'a partial page closes the historical backfill')
 assert.equal(safeImportError(404), 'Cuenta o recurso no encontrado.')
 assert.equal(safeImportError(500), 'No se pudo completar la sincronización.')
 console.log('Chess import normalization, deduplication and retry tests passed.')
