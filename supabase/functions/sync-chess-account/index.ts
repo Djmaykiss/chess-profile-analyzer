@@ -11,10 +11,11 @@ const resultFor = (value: string, color: string) => value === '1/2-1/2' ? 'draw'
 const toGame = (account: any, profileId: string, id: string, pgn: string, raw: any = {}) => { const h = headers(pgn); const white = h.White ?? raw.white?.username; const black = h.Black ?? raw.black?.username; const color = white?.toLowerCase() === account.username.toLowerCase() ? 'white' : 'black'; return { profile_id: profileId, account_id: account.id, platform: account.platform, external_game_id: id, game_url: raw.url ?? h.Site ?? null, played_at: playedAt(raw, h), white_username: white, black_username: black, white_rating: Number(h.WhiteElo ?? raw.white?.rating) || null, black_rating: Number(h.BlackElo ?? raw.black?.rating) || null, player_color: color, result: resultFor(h.Result ?? '1/2-1/2', color), rated: raw.rated ?? null, speed: raw.time_class ?? raw.speed ?? null, time_control: raw.time_control ?? h.TimeControl ?? null, eco: raw.eco?.split('/').pop() ?? h.ECO ?? null, opening: raw.opening ?? h.Opening ?? null, termination: raw.termination ?? h.Termination ?? null, pgn } }
 async function fetchWithRetry(url: string, init?: RequestInit) { for (let attempt = 0; attempt < 3; attempt += 1) { const response = await fetch(url, init); if (response.status !== 429 || attempt === 2) return response; await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1))) } throw new Error('unreachable') }
 async function upsertBatches(admin: any, games: any[]) { for (let offset = 0; offset < games.length; offset += 200) { const { error } = await admin.from('games').upsert(games.slice(offset, offset + 200), { onConflict: 'account_id,platform,external_game_id', ignoreDuplicates: true }); if (error) throw error } }
+async function requireWrite(operation: PromiseLike<{ error: unknown }>) { const { error } = await operation; if (error) throw error }
 async function importLichessStream(response: Response, account: any, profileId: string, admin: any, runId: string) {
   if (!response.body) throw new Error('lichess response body unavailable')
   const reader = response.body.getReader(); const decoder = new TextDecoder(); let remainder = ''; let found = 0; let oldest: number | undefined; let batch: any[] = []
-  const flush = async () => { if (!batch.length) return; await upsertBatches(admin, batch); batch = []; await admin.from('sync_runs').update({ games_found: found }).eq('id', runId) }
+  const flush = async () => { if (!batch.length) return; await upsertBatches(admin, batch); batch = []; await requireWrite(admin.from('sync_runs').update({ games_found: found }).eq('id', runId)) }
   while (true) {
     const { value, done } = await reader.read()
     const split = splitNdjson(decoder.decode(value ?? new Uint8Array(), { stream: !done }), remainder); remainder = split.remainder
@@ -43,7 +44,7 @@ Deno.serve(async request => {
     stage = 'account'; const { data: account } = await admin.from('chess_accounts').select('*').eq('id', accountId).eq('profile_id', profileId).eq('verification_status', 'verified').eq('is_active', true).single()
     if (!account) return Response.json({ error: 'Cuenta no sincronizable' }, { status: 404, headers: cors })
     const staleBefore = new Date(Date.now() - staleRunThresholdMs).toISOString()
-    await admin.from('sync_runs').update({ status: 'failed', finished_at: new Date().toISOString(), error_message: staleRunMessage }).eq('account_id', accountId).eq('status', 'running').lt('started_at', staleBefore)
+    await requireWrite(admin.from('sync_runs').update({ status: 'failed', finished_at: new Date().toISOString(), error_message: staleRunMessage }).eq('account_id', accountId).eq('status', 'running').lt('started_at', staleBefore))
     const { data: activeRun } = await admin.from('sync_runs').select('id').eq('account_id', accountId).eq('status', 'running').gte('started_at', staleBefore).maybeSingle()
     if (activeRun) return Response.json({ error: 'Ya hay una sincronización en curso.' }, { status: 409, headers: cors })
     const isLichessBackfill = account.platform === 'lichess' && !account.lichess_backfill_complete
@@ -63,13 +64,13 @@ Deno.serve(async request => {
       if (!response.ok) throw new Error('lichess unavailable')
       const page = await importLichessStream(response, account, profileId, admin, runId); found = page.found
       backfillState = isLichessBackfill ? nextLichessBackfillState(found, page.oldest) : backfillState
-      await admin.from('chess_accounts').update({ lichess_backfill_until: backfillState.until, lichess_backfill_complete: backfillState.backfillComplete, lichess_backfill_updated_at: new Date().toISOString(), ...(backfillState.hasMore ? {} : { last_sync_at: new Date().toISOString() }) }).eq('id', accountId)
+      await requireWrite(admin.from('chess_accounts').update({ lichess_backfill_until: backfillState.until, lichess_backfill_complete: backfillState.backfillComplete, lichess_backfill_updated_at: new Date().toISOString(), ...(backfillState.hasMore ? {} : { last_sync_at: new Date().toISOString() }) }).eq('id', accountId))
     }
     if (account.platform === 'chesscom') await upsertBatches(admin, games)
     const { count: after } = await admin.from('games').select('id', { count: 'exact', head: true }).eq('account_id', accountId)
     const imported = Math.max(0, (after ?? 0) - (before ?? 0)); const completedAt = new Date().toISOString()
-    if (account.platform === 'chesscom') await admin.from('chess_accounts').update({ last_sync_at: completedAt }).eq('id', accountId)
-    await admin.from('sync_runs').update({ status: 'completed', finished_at: completedAt, games_found: found, games_imported: imported, games_skipped: found - imported, has_more: backfillState.hasMore, backfill_complete: backfillState.backfillComplete }).eq('id', runId)
+    if (account.platform === 'chesscom') await requireWrite(admin.from('chess_accounts').update({ last_sync_at: completedAt }).eq('id', accountId))
+    await requireWrite(admin.from('sync_runs').update({ status: 'completed', finished_at: completedAt, games_found: found, games_imported: imported, games_skipped: found - imported, has_more: backfillState.hasMore, backfill_complete: backfillState.backfillComplete }).eq('id', runId))
     return Response.json({ runId, found, imported, skipped: found - imported, hasMore: backfillState.hasMore, backfillComplete: backfillState.backfillComplete }, { headers: cors })
   } catch (_error) { const message = messageFor(stage); const error = _error as { code?: string; message?: string; details?: string; hint?: string }; console.error(JSON.stringify({ stage, code: error.code ?? null, message: error.message ?? null, details: error.details ?? null, hint: error.hint ?? null })); if (admin && runId) await admin.from('sync_runs').update({ status: 'failed', finished_at: new Date().toISOString(), error_message: message }).eq('id', runId); return Response.json({ error: message }, { status: 500, headers: cors }) }
 })
