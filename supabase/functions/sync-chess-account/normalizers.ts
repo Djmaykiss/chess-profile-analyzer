@@ -19,7 +19,7 @@ export function lichessPageUrl(username: string, options: { until?: number; sinc
   return `https://lichess.org/api/games/user/${encodeURIComponent(username)}?${params}`
 }
 
-export function nextLichessBackfillState(found: number, oldest: number | undefined) {
-  const hasMore = found === lichessPageSize && typeof oldest === 'number' && Number.isFinite(oldest)
+export function nextLichessBackfillState(received: number, oldest: number | undefined) {
+  const hasMore = received === lichessPageSize && typeof oldest === 'number' && Number.isFinite(oldest)
   return { hasMore, backfillComplete: !hasMore, until: hasMore ? oldest - 1 : null }
 }

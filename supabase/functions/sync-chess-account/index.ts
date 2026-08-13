@@ -14,16 +14,16 @@ async function upsertBatches(admin: any, games: any[]) { for (let offset = 0; of
 async function requireWrite(operation: PromiseLike<{ error: unknown }>) { const { error } = await operation; if (error) throw error }
 async function importLichessStream(response: Response, account: any, profileId: string, admin: any, runId: string) {
   if (!response.body) throw new Error('lichess response body unavailable')
-  const reader = response.body.getReader(); const decoder = new TextDecoder(); let remainder = ''; let found = 0; let oldest: number | undefined; let batch: any[] = []
+  const reader = response.body.getReader(); const decoder = new TextDecoder(); let remainder = ''; let received = 0; let found = 0; let oldest: number | undefined; let batch: any[] = []
   const flush = async () => { if (!batch.length) return; await upsertBatches(admin, batch); batch = []; await requireWrite(admin.from('sync_runs').update({ games_found: found }).eq('id', runId)) }
   while (true) {
     const { value, done } = await reader.read()
     const split = splitNdjson(decoder.decode(value ?? new Uint8Array(), { stream: !done }), remainder); remainder = split.remainder
-    for (const line of split.complete) { const game = JSON.parse(line); if (!game.pgn || (game.variant && game.variant !== 'standard')) continue; batch.push(toGame(account, profileId, game.id, game.pgn, game)); oldest = Math.min(oldest ?? Number.MAX_SAFE_INTEGER, Number(game.lastMoveAt ?? game.createdAt)); found += 1; if (batch.length >= 200) await flush() }
+    for (const line of split.complete) { const game = JSON.parse(line); received += 1; oldest = Math.min(oldest ?? Number.MAX_SAFE_INTEGER, Number(game.lastMoveAt ?? game.createdAt)); if (!game.pgn || (game.variant && game.variant !== 'standard')) continue; batch.push(toGame(account, profileId, game.id, game.pgn, game)); found += 1; if (batch.length >= 200) await flush() }
     if (done) break
   }
-  if (remainder.trim()) { const game = JSON.parse(remainder); if (game.pgn && (!game.variant || game.variant === 'standard')) { batch.push(toGame(account, profileId, game.id, game.pgn, game)); oldest = Math.min(oldest ?? Number.MAX_SAFE_INTEGER, Number(game.lastMoveAt ?? game.createdAt)); found += 1 } }
-  await flush(); return { found, oldest }
+  if (remainder.trim()) { const game = JSON.parse(remainder); received += 1; oldest = Math.min(oldest ?? Number.MAX_SAFE_INTEGER, Number(game.lastMoveAt ?? game.createdAt)); if (game.pgn && (!game.variant || game.variant === 'standard')) { batch.push(toGame(account, profileId, game.id, game.pgn, game)); found += 1 } }
+  await flush(); return { received, found, oldest }
 }
 
 Deno.serve(async request => {
@@ -63,7 +63,7 @@ Deno.serve(async request => {
       stage = 'lichess'; const response = await fetchWithRetry(lichessPageUrl(account.username, isLichessBackfill ? { until: account.lichess_backfill_until ?? Date.now() } : { since }), { headers: { Accept: 'application/x-ndjson' } })
       if (!response.ok) throw new Error('lichess unavailable')
       const page = await importLichessStream(response, account, profileId, admin, runId); found = page.found
-      backfillState = isLichessBackfill ? nextLichessBackfillState(found, page.oldest) : backfillState
+      backfillState = isLichessBackfill ? nextLichessBackfillState(page.received, page.oldest) : backfillState
       await requireWrite(admin.from('chess_accounts').update({ lichess_backfill_until: backfillState.until, lichess_backfill_complete: backfillState.backfillComplete, lichess_backfill_updated_at: new Date().toISOString(), ...(backfillState.hasMore ? {} : { last_sync_at: new Date().toISOString() }) }).eq('id', accountId))
     }
     if (account.platform === 'chesscom') await upsertBatches(admin, games)
