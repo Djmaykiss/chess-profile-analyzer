@@ -9,3 +9,4 @@
 7. Esta base de Auth/RLS queda congelada y no debe modificarse salvo solicitud explícita. No continuar aún con integración Lichess/Chess.com.
 8. Los PGN originales son inmutables; nunca inventar partidas, estadísticas, ratings ni conclusiones.
 9. Todo cambio de base de datos usa migraciones. La UI debe ser responsive y la lógica de análisis no vive en componentes visuales.
+10. La verificación de cuentas se basa exclusivamente en respuestas válidas de APIs públicas; nunca marcar una cuenta como verificada con datos inventados.

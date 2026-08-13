@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "lint": "tsc -b",
-    "test": "node tests/verify-migration.mjs"
+    "test": "node tests/verify-migration.mjs && tsx tests/chess-platforms.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@types/node": "latest",
     "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@types/react-dom": "latest",
+    "tsx": "^4.23.12"
   }
 }

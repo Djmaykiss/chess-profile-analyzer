@@ -20,7 +20,11 @@ npm run dev
 
 Supabase Auth, sesión persistente, rutas privadas y persistencia de perfiles/cuentas están implementados. El modo demo/local fue eliminado. Data API está habilitada para `profiles` y `chess_accounts`; RLS fue validada con 13 pruebas cruzadas entre usuarios y 0 fallos.
 
-Confirm email está temporalmente desactivado para QA. Debe reactivarse antes de producción o sustituirse por SMTP configurado. La integración con Lichess/Chess.com aún no está implementada.
+Confirm email está temporalmente desactivado para QA. Debe reactivarse antes de producción o sustituirse por SMTP configurado.
+
+## Verificación de cuentas (Fase 3A)
+
+La aplicación verifica usernames exclusivamente con las APIs públicas de Lichess y Chess.com. No solicita contraseñas ni marca una cuenta como verificada sin una respuesta válida de la plataforma. La importación masiva de partidas sigue fuera de alcance.
 
 ## Calidad
 

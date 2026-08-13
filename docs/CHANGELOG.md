@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0 — En preparación
+
+- Añadida capa centralizada para verificar perfiles públicos de Lichess y Chess.com.
+- Añadidos estados de verificación y normalización de ratings públicos.
+- Añadida migración versionada para los metadatos de verificación, pendiente de aplicar en remoto.
+
 ## 0.2.1
 
 - Validada la Fase 2: Auth, persistencia, Data API y RLS.
