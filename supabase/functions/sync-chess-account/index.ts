@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, apikey, content-type' }
+const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' }
 const safeError = 'No se pudo completar la sincronización.'
 const headers = (pgn: string) => Object.fromEntries([...pgn.matchAll(/^\[([^ ]+) "(.*)"\]$/gm)].map(([, key, value]) => [key, value]))
 const resultFor = (value: string, color: string) => value === '1/2-1/2' ? 'draw' : (value === '1-0') === (color === 'white') ? 'win' : 'loss'

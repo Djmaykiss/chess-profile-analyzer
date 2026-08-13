@@ -8,7 +8,7 @@ export async function syncChessAccount(profileId: string, accountId: string): Pr
   const { data: { session } } = await client.auth.getSession()
   if (!session) throw new Error('Tu sesión expiró. Inicia sesión de nuevo.')
   const { data, error } = await client.functions.invoke('sync-chess-account', { body: { profileId, accountId }, headers: { Authorization: `Bearer ${session.access_token}` } })
-  if (error) throw new Error('No se pudo completar la sincronización. Inténtalo de nuevo.')
+  if (error) throw new Error('No se pudo iniciar la sincronización. Revisa tu conexión e inténtalo de nuevo.')
   if (!data?.runId) throw new Error('La sincronización no devolvió un resultado válido.')
   return data as SyncResult
 }

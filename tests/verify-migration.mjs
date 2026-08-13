@@ -21,4 +21,5 @@ const importRequirements = ['create table public.games', 'create table public.sy
 const missingImport = importRequirements.filter((item) => !importSql.includes(item))
 if (missingImport.length) throw new Error(`Import migration requirements missing: ${missingImport.join(', ')}`)
 if (!edgeFunction.includes("Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')") || edgeFunction.includes('VITE_SUPABASE_SERVICE_ROLE_KEY')) throw new Error('service_role guardrail failed.')
+if (!edgeFunction.includes('x-client-info')) throw new Error('Edge Function CORS must allow the Supabase client header.')
 console.log('Migration security guardrails passed.')
