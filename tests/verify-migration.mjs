@@ -4,6 +4,7 @@ const sql = readFileSync(new URL('../supabase/migrations/202608120001_initial_au
 const verificationSql = readFileSync(new URL('../supabase/migrations/202608120002_chess_account_verification.sql', import.meta.url), 'utf8')
 const importSql = readFileSync(new URL('../supabase/migrations/202608120003_games_and_sync_runs.sql', import.meta.url), 'utf8')
 const resumableBackfillSql = readFileSync(new URL('../supabase/migrations/202608120006_lichess_resumable_backfill.sql', import.meta.url), 'utf8')
+const reconciliationSql = readFileSync(new URL('../supabase/migrations/202608120007_reconcile_djmaykiss_lichess_backfill.sql', import.meta.url), 'utf8')
 const edgeFunction = readFileSync(new URL('../supabase/functions/sync-chess-account/index.ts', import.meta.url), 'utf8')
 const required = [
   'alter table public.profiles enable row level security',
@@ -24,6 +25,7 @@ if (missingImport.length) throw new Error(`Import migration requirements missing
 const resumableRequirements = ['add column lichess_backfill_until bigint', 'add column lichess_backfill_complete boolean not null default false', 'add column lichess_backfill_updated_at timestamptz', "sync_scope text not null default 'incremental'", "check (sync_scope in ('backfill', 'incremental'))", 'add column has_more boolean not null default false', 'add column backfill_complete boolean', 'games_account_played_at_desc_idx']
 const missingResumable = resumableRequirements.filter((item) => !resumableBackfillSql.toLowerCase().includes(item))
 if (missingResumable.length) throw new Error(`Resumable backfill migration requirements missing: ${missingResumable.join(', ')}`)
+if (!reconciliationSql.includes("WHERE id = '92431cbd-067a-4045-a503-bc3a96f5ffe0'::uuid") || !reconciliationSql.includes("platform = 'lichess'")) throw new Error('Djmaykiss reconciliation migration must remain narrowly scoped.')
 if (!edgeFunction.includes("Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')") || edgeFunction.includes('VITE_SUPABASE_SERVICE_ROLE_KEY')) throw new Error('service_role guardrail failed.')
 if (!edgeFunction.includes('x-client-info')) throw new Error('Edge Function CORS must allow the Supabase client header.')
 console.log('Migration security guardrails passed.')
