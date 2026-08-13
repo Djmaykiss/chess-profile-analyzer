@@ -26,6 +26,14 @@ Confirm email está temporalmente desactivado para QA. Debe reactivarse antes de
 
 La aplicación verifica usernames exclusivamente con las APIs públicas de Lichess y Chess.com. No solicita contraseñas ni marca una cuenta como verificada sin una respuesta válida de la plataforma. La importación masiva de partidas sigue fuera de alcance.
 
+## Importación de partidas (Fase 3B)
+
+Fase 3B está validada: `sync-chess-account` importa PGN reales de Lichess y Chess.com, normaliza partidas y deduplica por `account_id + platform + external_game_id`.
+
+Los historiales grandes de Lichess se procesan por páginas de 500 registros con cursor persistente `until`, solapando el timestamp de borde para no perder partidas que comparten `lastMoveAt`. Cada página termina como `completed`; los runs antiguos en `running` se recuperan de forma segura. Tras el backfill, las sincronizaciones son incrementales desde `last_sync_at`.
+
+La auditoría de Djmaykiss01 verificó 4.422 entradas estándar con PGN en la exportación oficial, de las cuales 4.413 son IDs de partida únicos (nueve entradas repetidas por la API). Persisten 4.413 partidas con PGN y cero duplicados.
+
 ## Calidad
 
 ```bash
