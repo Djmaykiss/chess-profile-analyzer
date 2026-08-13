@@ -1,0 +1,20 @@
+import { requireSupabase } from '../supabase'
+
+export type SyncRun = { id: string; profile_id: string; account_id: string | null; status: 'pending' | 'running' | 'completed' | 'failed'; started_at: string; finished_at: string | null; games_found: number; games_imported: number; games_skipped: number; games_failed: number; error_message: string | null }
+export type SyncResult = { runId: string; found: number; imported: number; skipped?: number }
+
+export async function syncChessAccount(profileId: string, accountId: string): Promise<SyncResult> {
+  const client = requireSupabase()
+  const { data: { session } } = await client.auth.getSession()
+  if (!session) throw new Error('Tu sesión expiró. Inicia sesión de nuevo.')
+  const { data, error } = await client.functions.invoke('sync-chess-account', { body: { profileId, accountId }, headers: { Authorization: `Bearer ${session.access_token}` } })
+  if (error) throw new Error('No se pudo completar la sincronización. Inténtalo de nuevo.')
+  if (!data?.runId) throw new Error('La sincronización no devolvió un resultado válido.')
+  return data as SyncResult
+}
+
+export async function listSyncRuns(profileId: string): Promise<SyncRun[]> {
+  const { data, error } = await requireSupabase().from('sync_runs').select('*').eq('profile_id', profileId).order('started_at', { ascending: false }).limit(12)
+  if (error) throw error
+  return (data ?? []) as SyncRun[]
+}
