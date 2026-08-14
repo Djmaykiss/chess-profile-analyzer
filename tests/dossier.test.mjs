@@ -4,6 +4,7 @@ import { classifyFirstMove, dossierRanges, EMPTY_DOSSIER, normalizeDossier, norm
 
 const migration = readFileSync(new URL('../supabase/migrations/202608120011_dossier_analytics.sql', import.meta.url), 'utf8')
 const openingsMigration = readFileSync(new URL('../supabase/migrations/202608120012_dossier_openings_trends.sql', import.meta.url), 'utf8')
+const scopeFixMigration = readFileSync(new URL('../supabase/migrations/202608120013_fix_dossier_scope_return.sql', import.meta.url), 'utf8')
 const securityRequirements = ['security invoker', 'auth.uid()', 'Profile is not accessible to the current user', 'revoke all on function public.get_profile_dossier_summary(uuid, integer, timestamptz) from public, anon', 'grant execute on function public.get_profile_dossier_summary(uuid, integer, timestamptz) to authenticated']
 for (const requirement of securityRequirements) assert.ok(migration.includes(requirement), `Missing dossier security requirement: ${requirement}`)
 assert.ok(migration.includes('p_recent_limit is not null and p_date_from is not null'), 'Recent and date ranges must be mutually exclusive.')
@@ -27,6 +28,7 @@ assert.equal(resultLabel(summary), '5 V · 2 T · 3 D')
 assert.deepEqual(normalizeDossier(null), EMPTY_DOSSIER, 'Profiles without games return an empty dossier safely.')
 
 for (const required of ['p_color not in (\'white\', \'black\')', 'p_limit < 1 or p_limit > 20', "p_sort not in ('frequency', 'best', 'worst')", 'regexp_replace(g.pgn', "when 'e4' then '1.e4'", "when 'd4' then '1.d4'", "when 'c4' then '1.c4'", "when 'Nf3' then '1.Nf3'", 'having count(*) >= 10', 'security invoker']) assert.ok(openingsMigration.includes(required), `Missing openings/trends requirement: ${required}`)
+assert.ok(scopeFixMigration.includes('with ranked_game_ids as') && scopeFixMigration.includes('join ranked_game_ids ranked on ranked.id = g.id'), 'The scope helper must return only public.games columns.')
 assert.equal(classifyFirstMove('e4'), '1.e4')
 assert.equal(classifyFirstMove('d4+'), '1.d4')
 assert.equal(classifyFirstMove('c4?!'), '1.c4')
