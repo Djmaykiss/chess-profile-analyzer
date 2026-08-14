@@ -1,6 +1,6 @@
 import { requireSupabase } from '../../services/supabase'
 import { normalizeDossier, normalizeTrends } from './dossier-formatters'
-import { BlackResponseStat, DossierRange, DossierSort, DossierSummary, DossierTrends, OpeningStat, RepertoireBuildResult, RepertoireNode } from './dossier.types'
+import { BlackResponseStat, DossierRange, DossierSort, DossierSummary, DossierTrends, OpeningStat, RepertoireBuildResult, RepertoireIndexJob, RepertoireNode } from './dossier.types'
 
 export async function getProfileDossierSummary(profileId: string, range: DossierRange): Promise<DossierSummary> {
   const { data, error } = await requireSupabase().rpc('get_profile_dossier_summary', {
@@ -45,4 +45,11 @@ export async function buildProfileRepertoireIndex(profileId: string): Promise<Re
   const { data, error } = await client.functions.invoke('build-repertoire-index', { body: { profileId }, headers: { Authorization: `Bearer ${session.access_token}` } })
   if (error || !data) throw new Error('No se pudo preparar el repertorio.')
   return data as RepertoireBuildResult
+}
+
+export async function getRepertoireIndexJob(profileId: string): Promise<RepertoireIndexJob | null> {
+  const { data, error } = await requireSupabase().from('repertoire_index_jobs').select('status, processed_games, indexed_moves, last_game_id, error_message').eq('profile_id', profileId).maybeSingle()
+  if (error) throw error
+  if (!data) return null
+  return { status: data.status as RepertoireIndexJob['status'], processedGames: Number(data.processed_games ?? 0), indexedMoves: Number(data.indexed_moves ?? 0), lastGameId: data.last_game_id, errorMessage: data.error_message }
 }

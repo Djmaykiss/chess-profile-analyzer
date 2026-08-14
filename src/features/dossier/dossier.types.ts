@@ -14,6 +14,7 @@ export type TrendItem = DossierRecord & { label?: string; color?: string; eco?: 
 export type DossierTrends = { sample_threshold: number; favorite_opening: TrendItem | null; best_opening: TrendItem | null; worst_opening: TrendItem | null; best_color: TrendItem | null; worst_color: TrendItem | null; best_speed: TrendItem | null; worst_speed: TrendItem | null; range_vs_history: { range_games: number; range_win_rate: number; all_games: number; all_win_rate: number; win_rate_delta: number } }
 export type RepertoireNode = DossierRecord & { move_sequence: string; san: string; ply: number; games: number; win_rate: number; percentage: number }
 export type RepertoireBuildResult = { completed: boolean; processedGames: number; indexedMoves: number; batchGames?: number }
+export type RepertoireIndexJob = { status: 'pending' | 'running' | 'completed' | 'failed'; processedGames: number; indexedMoves: number; lastGameId: string | null; errorMessage: string | null }
 export type DossierSummary = DossierRecord & {
   win_rate: number
   white: DossierRecord
