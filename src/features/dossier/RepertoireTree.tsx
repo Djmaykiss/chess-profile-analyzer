@@ -23,7 +23,7 @@ export function RepertoireTree({ profileId, range }: { profileId: string; range:
 
   useEffect(() => setProgress(job ?? null), [job])
   useEffect(() => {
-    document.title = progress?.status === 'running' ? `Chess Profile Analyzer — Indexando ${progress.processedGames}` : 'Chess Profile Analyzer'
+    document.title = progress?.status === 'running' ? `Chess Profile Analyzer — Indexando ${progress.processedGames}` : progress?.status === 'completed' ? `Chess Profile Analyzer — Índice completo ${progress.processedGames}/${progress.indexedMoves}` : 'Chess Profile Analyzer'
   }, [progress?.processedGames, progress?.status])
   const runToCompletion = useCallback(async () => {
     if (running.current) return
