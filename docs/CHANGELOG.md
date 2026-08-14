@@ -5,6 +5,8 @@
 - Añadido índice derivado `game_repertoire_moves` y cursor analítico reanudable por perfil.
 - Añadida Edge Function `build-repertoire-index` para extraer exclusivamente la línea principal de PGN en lotes idempotentes.
 - Añadido árbol de repertorio por color, rango, profundidad y mínimo de partidas.
+- Validada la indexación real de Michael Perez: 10.459 partidas y 662.133 movimientos derivados, sin tocar PGN ni partidas fuente.
+- Añadida migración 015 para desambiguar el contrato del RPC del árbol, sin cambios de datos ni permisos.
 
 ## 0.6.0 — Fase 3C.2
 

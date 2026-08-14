@@ -48,6 +48,8 @@ El Dossier incorpora aperturas reales con blancas y negras, respuestas con negra
 
 El repertorio se deriva de la línea principal de los PGN mediante lotes reanudables del backend. `game_repertoire_moves` conserva SAN, secuencia y contexto mínimo por ply sin alterar los PGN originales. El navegador recibe solo nodos agregados por rama y puede limitar color, profundidad (hasta 12 ply), muestra mínima y rango.
 
+Fase 3C.3 validada: el indice de Michael Perez contiene 10.459 partidas reales y 662.133 movimientos derivados. El proceso conserva su cursor y usa `UNIQUE(game_id, ply)` para permanecer idempotente sin alterar PGN ni partidas fuente.
+
 ## Calidad
 
 ```bash

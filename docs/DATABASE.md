@@ -20,6 +20,8 @@ La primera jugada rival se extrae de los PGN en PostgreSQL de forma acotada, sin
 
 `get_profile_repertoire_tree()` es `SECURITY INVOKER`, valida el perfil propio a través del helper de alcance y entrega únicamente nodos agregados con W/D/L, win rate y porcentaje de rama. No altera `games`, PGN, importación, sincronización ni `sync_runs`.
 
+La migracion `202608120015_fix_repertoire_tree_output_aliases.sql` corrige exclusivamente alias ambiguos del contrato de salida del RPC de arbol. No modifica datos, RLS ni grants. Los jobs y movimientos derivados siguen bajo policies de propietario; anon no puede ejecutar el RPC.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.

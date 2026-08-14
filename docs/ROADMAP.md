@@ -4,7 +4,7 @@ Fase 3C.1 en curso: resumen agregado seguro por perfil y rangos por cantidad o t
 
 Fase 3C.2 en curso: aperturas reales, respuestas con negras por primera jugada y tendencias con muestra mínima. Repertorio, scouting, comparación avanzada y Stockfish continúan pendientes.
 
-Fase 3C.3 en curso: árbol de repertorio real derivado de la línea principal de PGN, con indexación reanudable por backend. Scouting, comparación avanzada y Stockfish continúan pendientes.
+Fase 3C.3 validada: árbol de repertorio real derivado de la línea principal de PGN, con indexación reanudable por backend. Scouting, comparación avanzada y Stockfish continúan pendientes.
 
 Actualización: Fases 3A y 3B están validadas y congeladas.
 
