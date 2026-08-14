@@ -44,6 +44,10 @@ La base de importación, sincronización, cursores, deduplicación y RLS de Fase
 
 El Dossier incorpora aperturas reales con blancas y negras, respuestas con negras clasificadas desde la primera SAN real del PGN (`1.e4`, `1.d4`, `1.c4`, `1.Nf3` u otros) y tendencias basadas en una muestra mínima de 10 partidas. Las agregaciones se ejecutan en PostgreSQL; el navegador no descarga PGN masivos.
 
+## Repertorio real (Fase 3C.3)
+
+El repertorio se deriva de la línea principal de los PGN mediante lotes reanudables del backend. `game_repertoire_moves` conserva SAN, secuencia y contexto mínimo por ply sin alterar los PGN originales. El navegador recibe solo nodos agregados por rama y puede limitar color, profundidad (hasta 12 ply), muestra mínima y rango.
+
 ## Calidad
 
 ```bash

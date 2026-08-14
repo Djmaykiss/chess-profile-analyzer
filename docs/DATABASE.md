@@ -14,6 +14,12 @@ La primera jugada rival se extrae de los PGN en PostgreSQL de forma acotada, sin
 
 `202608120013_fix_dossier_scope_return.sql` corrige únicamente el contrato de retorno del helper analítico para que entregue exclusivamente columnas de `public.games`; no modifica datos ni permisos.
 
+## Fase 3C.3: repertorio derivado
+
+`202608120014_dossier_repertoire_tree.sql` crea `game_repertoire_moves` como índice derivado e idempotente de la línea principal de cada PGN y `repertoire_index_jobs` para su cursor de progreso independiente. Ambas tablas tienen RLS. El frontend no recibe privilegios de escritura: la Edge Function `build-repertoire-index` escribe con el backend autorizado y hace `upsert` por `game_id + ply`.
+
+`get_profile_repertoire_tree()` es `SECURITY INVOKER`, valida el perfil propio a través del helper de alcance y entrega únicamente nodos agregados con W/D/L, win rate y porcentaje de rama. No altera `games`, PGN, importación, sincronización ni `sync_runs`.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.

@@ -1,6 +1,6 @@
 import { requireSupabase } from '../../services/supabase'
 import { normalizeDossier, normalizeTrends } from './dossier-formatters'
-import { BlackResponseStat, DossierRange, DossierSort, DossierSummary, DossierTrends, OpeningStat } from './dossier.types'
+import { BlackResponseStat, DossierRange, DossierSort, DossierSummary, DossierTrends, OpeningStat, RepertoireBuildResult, RepertoireNode } from './dossier.types'
 
 export async function getProfileDossierSummary(profileId: string, range: DossierRange): Promise<DossierSummary> {
   const { data, error } = await requireSupabase().rpc('get_profile_dossier_summary', {
@@ -31,4 +31,18 @@ export async function getProfileDossierTrends(profileId: string, range: DossierR
   const { data, error } = await requireSupabase().rpc('get_profile_dossier_trends', { target_profile_id: profileId, ...rangeParams(range) })
   if (error) throw error
   return normalizeTrends(data)
+}
+
+export async function getProfileRepertoireTree(profileId: string, playerColor: 'white' | 'black', range: DossierRange, maxPly: number, minGames: number): Promise<RepertoireNode[]> {
+  const { data, error } = await requireSupabase().rpc('get_profile_repertoire_tree', { target_profile_id: profileId, p_player_color: playerColor, p_max_ply: maxPly, p_min_games: minGames, ...rangeParams(range) })
+  if (error) throw error
+  return numericStats(data).map(row => ({ ...row, move_sequence: String(row.move_sequence), san: String(row.san), ply: Number(row.ply), percentage: Number(row.percentage ?? 0) })) as RepertoireNode[]
+}
+
+export async function buildProfileRepertoireIndex(profileId: string): Promise<RepertoireBuildResult> {
+  const client = requireSupabase(); const { data: { session } } = await client.auth.getSession()
+  if (!session) throw new Error('Tu sesión expiró. Inicia sesión de nuevo.')
+  const { data, error } = await client.functions.invoke('build-repertoire-index', { body: { profileId }, headers: { Authorization: `Bearer ${session.access_token}` } })
+  if (error || !data) throw new Error('No se pudo preparar el repertorio.')
+  return data as RepertoireBuildResult
 }

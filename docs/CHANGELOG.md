@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 — Fase 3C.3
+
+- Añadido índice derivado `game_repertoire_moves` y cursor analítico reanudable por perfil.
+- Añadida Edge Function `build-repertoire-index` para extraer exclusivamente la línea principal de PGN en lotes idempotentes.
+- Añadido árbol de repertorio por color, rango, profundidad y mínimo de partidas.
+
 ## 0.6.0 — Fase 3C.2
 
 - Añadidas estadísticas de aperturas reales por color, con ECO, nombre, W/D/L y win rate.
