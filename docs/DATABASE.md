@@ -48,4 +48,8 @@ La migración `202608120002_chess_account_verification.sql` añade a `chess_acco
 
 Las partidas se deduplican por `account_id + platform + external_game_id`. El PGN se mantiene inmutable. Todos los cambios se entregan mediante migraciones de Supabase.
 
+## Cierre de Fase 3D.3
+
+La migración `202608120019_fix_stockfish_analysis_cache_version.sql` alinea la reutilización del RPC con Stockfish 17.1. Un análisis equivalente de la misma partida, PGN, profundidad y configuración se reutiliza sin crear otro job ni otro resultado. No modifica partidas, PGN, RLS, grants de tablas ni análisis existentes.
+
 `202608120004_grant_sync_backend_write.sql` otorga al backend de la Edge Function los permisos mínimos de escritura. `202608120005_fix_chesscom_played_at_seconds.sql` corrige timestamps de Chess.com. `202608120006_lichess_resumable_backfill.sql` añade cursor de backfill, y `007` a `010` son recuperaciones estrictamente acotadas para Djmaykiss01 que nunca eliminan juegos.

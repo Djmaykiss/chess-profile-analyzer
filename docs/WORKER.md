@@ -40,4 +40,10 @@ npm run test
 docker build -f Dockerfile -t chess-profile-analyzer-worker:3d3-local ..
 ```
 
+## Cierre de Fase 3D.3
+
+La prueba controlada de una partida real a profundidad 16 completó 53 plies y persistió 53 evaluaciones, con FEN, PV, profundidad, nodos y milisegundos por ply. Las evaluaciones cp se guardan desde la perspectiva de blancas, mientras `eval_loss` se calcula desde la perspectiva del jugador que movió, incluidas las negras. Los mates se conservan como mates, sin equivalencias artificiales en centipeones.
+
+**Accuracy estimada por Chess Profile Analyzer** es una métrica propia, reproducible y versionada; no equivale ni pretende equivaler a las métricas de Chess.com o Lichess.
+
 Para ejecutar contra Supabase, inyecta las dos variables backend solo en la sesión/contenedor. Nunca pegues la clave de servicio en el chat, repositorio o frontend.

@@ -70,3 +70,7 @@ npm run typecheck
 npm run test
 npm run build
 ```
+
+## Stockfish (Fase 3D.3)
+
+El worker aislado procesa una partida por vez con Stockfish 17.1 y secretos únicamente en su runtime. La validación controlada persistió 53 evaluaciones para 53 plies sin duplicados. **Accuracy estimada por Chess Profile Analyzer** es una fórmula propia y reproducible; no equivale a la accuracy de Chess.com ni Lichess. No hay análisis masivo ni proveedor de worker permanente.

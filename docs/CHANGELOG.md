@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0 — Fase 3D.3 validada
+
+- Añadido worker aislado reproducible con Stockfish 17.1 y persistencia por ply.
+- Validado un análisis real: 53 plies, 53 evaluaciones, PV y métricas sin duplicados.
+- Documentada **Accuracy estimada por Chess Profile Analyzer** como métrica propia, reproducible y no equivalente a Chess.com o Lichess.
+- Añadida migración 019 para reutilizar resultados equivalentes del worker 17.1.
+
 ## Próximo — Fase 3D.3 en validación local
 
 - Añadido worker backend separado y Dockerfile reproducible para Stockfish 17.1 desde fuente oficial.

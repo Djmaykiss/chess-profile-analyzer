@@ -17,4 +17,4 @@ Actualización: Fases 3A y 3B están validadas y congeladas.
 5. Dossier, análisis avanzado, Stockfish y entrenamiento.
 Fase 3D.2 validada: cola persistente y segura de análisis, cancelación, estado y contrato para worker futuro. No hay engine, worker ni análisis de partidas todavía; la siguiente fase implementará un worker dedicado y un análisis manual controlado.
 
-Fase 3D.3 en validación local: worker aislado, Stockfish nativo compilado desde fuente oficial, procesamiento secuencial de una partida y persistencia idempotente. No se desplegará un proveedor externo hasta completar la prueba local controlada.
+Fase 3D.3 validada: worker aislado, Stockfish nativo compilado desde fuente oficial, procesamiento secuencial controlado de una partida y persistencia idempotente. No se desplegará un proveedor externo ni análisis masivo sin una fase posterior explícita.

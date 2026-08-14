@@ -16,7 +16,7 @@ async function runOne() {
     if (job.engine !== 'stockfish' || job.requested_depth !== config.depth) throw new Error('Unsupported analysis configuration')
     const { data: game, error: gameError } = await admin.from('games').select('id,profile_id,pgn').eq('id', job.game_id).single(); if (gameError || !game) throw gameError ?? new Error('Game missing')
     const stored = game as StoredGame; const sourceHash = pgnHash(stored.pgn)
-    const { data: duplicate } = await admin.from('game_analysis').select('id').eq('game_id', job.game_id).eq('engine', 'stockfish').eq('depth', job.requested_depth).eq('analysis_config_hash', job.analysis_config_hash).eq('source_pgn_hash', sourceHash).maybeSingle()
+    const { data: duplicate } = await admin.from('game_analysis').select('id').eq('game_id', job.game_id).eq('engine', 'stockfish').eq('engine_version', '17.1').eq('depth', job.requested_depth).eq('analysis_config_hash', job.analysis_config_hash).eq('source_pgn_hash', sourceHash).maybeSingle()
     if (duplicate) { await admin.from('game_analysis_jobs').update({ status: 'completed', progress: 100, finished_at: new Date().toISOString(), heartbeat_at: new Date().toISOString() }).eq('id', job.id); return true }
     engine = new Stockfish(config.stockfishPath); await engine.start()
     const isCancelled = async () => { const { data } = await admin.from('game_analysis_jobs').select('status').eq('id', job.id).single(); return data?.status === 'cancel_requested' }
