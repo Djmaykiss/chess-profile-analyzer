@@ -9,10 +9,10 @@ RUN git clone --depth 1 --branch ${STOCKFISH_TAG} https://github.com/official-st
 FROM node:24-bookworm-slim
 WORKDIR /app
 COPY worker/package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 COPY worker/tsconfig.json ./
 COPY worker/src ./src
-RUN npm install --no-save typescript@5.9.2 && npx tsc -p tsconfig.json && npm prune --omit=dev
+RUN npx tsc -p tsconfig.json && npm prune --omit=dev
 COPY --from=stockfish-build /src/stockfish/src/stockfish /usr/local/bin/stockfish
 ENV STOCKFISH_PATH=/usr/local/bin/stockfish ANALYSIS_DEPTH=16 WORKER_POLL_INTERVAL_MS=3000 WORKER_RUN_ONCE=true
 CMD ["node", "dist/worker.js"]
