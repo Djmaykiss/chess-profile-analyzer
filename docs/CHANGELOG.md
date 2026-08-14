@@ -6,6 +6,7 @@
 - Añadido análisis de respuestas con negras basado en la primera SAN real del PGN.
 - Añadidas tendencias de apertura, color y ritmo con muestra mínima de 10 partidas.
 - Añadida migración 012 con RPCs de solo lectura `SECURITY INVOKER` y sin cambios en Fase 3B.
+- Añadida migración 013 para corregir el retorno del helper de alcance sin cambiar datos ni seguridad.
 
 ## 0.5.0 — Fase 3C.1
 

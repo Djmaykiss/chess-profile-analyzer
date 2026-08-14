@@ -12,6 +12,8 @@ El RPC es `SECURITY INVOKER`, exige `auth.uid()` y comprueba que el perfil solic
 
 La primera jugada rival se extrae de los PGN en PostgreSQL de forma acotada, sin modificar el PGN ni `games`. Las tendencias de apertura exigen un mínimo de 10 partidas. La migración no altera importación, sincronización, RLS existente, grants existentes, `sync_runs` ni datos.
 
+`202608120013_fix_dossier_scope_return.sql` corrige únicamente el contrato de retorno del helper analítico para que entregue exclusivamente columnas de `public.games`; no modifica datos ni permisos.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.
