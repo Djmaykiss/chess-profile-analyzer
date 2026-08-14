@@ -22,5 +22,8 @@ export type DossierSummary = DossierRecord & {
   platforms: DossierBreakdown[]
   speeds: DossierBreakdown[]
 }
+export type ScoutingEvidence = { move_sequence?: string; san?: string; eco?: string; opening?: string; label?: string; games: number; wins: number; draws: number; losses: number; win_rate: number; percentage?: number; sample_size: number; confidence: string }
+export type ProfileScouting = { sample_rules: Record<string, string>; white_first_moves: ScoutingEvidence[]; black_responses: ScoutingEvidence[]; favorite_openings: ScoutingEvidence[]; best_openings: ScoutingEvidence[]; worst_openings: ScoutingEvidence[]; recurrent_lines: ScoutingEvidence[]; best_lines: ScoutingEvidence[]; worst_lines: ScoutingEvidence[]; best_color: ScoutingEvidence | null; best_speed: ScoutingEvidence | null }
+export type ProfileComparison = { left: { summary: DossierSummary; scouting: ProfileScouting; ratings: Array<Record<string, unknown>> }; right: { summary: DossierSummary; scouting: ProfileScouting; ratings: Array<Record<string, unknown>> }; head_to_head: { games: number; left_wins: number; draws: number; right_wins: number; recent_games: Array<{ played_at: string; game_url: string | null; white_username: string; black_username: string; left_color: string; result: string }> } }
 
 export type DossierPageProps = { profiles: Profile[]; activeProfile: Profile | null; onSelectProfile: (profileId: string) => void }

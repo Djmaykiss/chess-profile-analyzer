@@ -1,6 +1,6 @@
 import { requireSupabase } from '../../services/supabase'
 import { normalizeDossier, normalizeTrends } from './dossier-formatters'
-import { BlackResponseStat, DossierRange, DossierSort, DossierSummary, DossierTrends, OpeningStat, RepertoireBuildResult, RepertoireIndexJob, RepertoireNode } from './dossier.types'
+import { BlackResponseStat, DossierRange, DossierSort, DossierSummary, DossierTrends, OpeningStat, ProfileComparison, ProfileScouting, RepertoireBuildResult, RepertoireIndexJob, RepertoireNode } from './dossier.types'
 
 export async function getProfileDossierSummary(profileId: string, range: DossierRange): Promise<DossierSummary> {
   const { data, error } = await requireSupabase().rpc('get_profile_dossier_summary', {
@@ -52,4 +52,17 @@ export async function getRepertoireIndexJob(profileId: string): Promise<Repertoi
   if (error) throw error
   if (!data) return null
   return { status: data.status as RepertoireIndexJob['status'], processedGames: Number(data.processed_games ?? 0), indexedMoves: Number(data.indexed_moves ?? 0), lastGameId: data.last_game_id, errorMessage: data.error_message }
+}
+
+export async function getProfileScouting(profileId: string, range: DossierRange): Promise<ProfileScouting> {
+  const { data, error } = await requireSupabase().rpc('get_profile_scouting', { target_profile_id: profileId, ...rangeParams(range) })
+  if (error) throw error
+  return data as ProfileScouting
+}
+
+export async function compareProfileDossiers(leftProfileId: string, rightProfileId: string, range: DossierRange): Promise<ProfileComparison> {
+  const { data, error } = await requireSupabase().rpc('compare_profile_dossiers', { left_profile_id: leftProfileId, right_profile_id: rightProfileId, ...rangeParams(range) })
+  if (error) throw error
+  const output = data as ProfileComparison
+  return { ...output, left: { ...output.left, summary: normalizeDossier(output.left.summary) }, right: { ...output.right, summary: normalizeDossier(output.right.summary) } }
 }

@@ -22,6 +22,10 @@ La primera jugada rival se extrae de los PGN en PostgreSQL de forma acotada, sin
 
 La migracion `202608120015_fix_repertoire_tree_output_aliases.sql` corrige exclusivamente alias ambiguos del contrato de salida del RPC de arbol. No modifica datos, RLS ni grants. Los jobs y movimientos derivados siguen bajo policies de propietario; anon no puede ejecutar el RPC.
 
+## Fase 3C.4: scouting y comparación
+
+`202608120016_dossier_scouting_comparison.sql` añade índices de lectura y los RPCs `get_profile_scouting` y `compare_profile_dossiers`. Ambos son `SECURITY INVOKER`, exigen sesión, reutilizan el alcance privado por perfil y revocan acceso a `anon`. La comparación exige dos perfiles distintos del mismo usuario y resuelve head-to-head mediante aliases de `chess_accounts`.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.

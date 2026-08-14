@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { isSupabaseConfigured } from '../../services/supabase'
-import { buildProfileRepertoireIndex, getProfileBlackResponses, getProfileDossierSummary, getProfileDossierTrends, getProfileOpeningStats, getRepertoireIndexJob, getProfileRepertoireTree } from './dossier.service'
+import { buildProfileRepertoireIndex, compareProfileDossiers, getProfileBlackResponses, getProfileDossierSummary, getProfileDossierTrends, getProfileOpeningStats, getProfileScouting, getRepertoireIndexJob, getProfileRepertoireTree } from './dossier.service'
 import { DossierRange, DossierSort } from './dossier.types'
 
 export const useProfileDossierSummary = (profileId: string | undefined, range: DossierRange) => useQuery({ queryKey: ['profile-dossier-summary', profileId, range], queryFn: () => getProfileDossierSummary(profileId!, range), enabled: Boolean(profileId && isSupabaseConfigured) })
@@ -9,4 +9,6 @@ export const useProfileBlackResponses = (profileId: string | undefined, range: D
 export const useProfileDossierTrends = (profileId: string | undefined, range: DossierRange) => useQuery({ queryKey: ['profile-dossier-trends', profileId, range], queryFn: () => getProfileDossierTrends(profileId!, range), enabled: Boolean(profileId && isSupabaseConfigured) })
 export const useProfileRepertoireTree = (profileId: string | undefined, color: 'white' | 'black', range: DossierRange, maxPly: number, minGames: number) => useQuery({ queryKey: ['profile-repertoire-tree', profileId, color, range, maxPly, minGames], queryFn: () => getProfileRepertoireTree(profileId!, color, range, maxPly, minGames), enabled: Boolean(profileId && isSupabaseConfigured) })
 export const useProfileRepertoireIndexJob = (profileId: string | undefined) => useQuery({ queryKey: ['profile-repertoire-index-job', profileId], queryFn: () => getRepertoireIndexJob(profileId!), enabled: Boolean(profileId && isSupabaseConfigured) })
+export const useProfileScouting = (profileId: string | undefined, range: DossierRange) => useQuery({ queryKey: ['profile-scouting', profileId, range], queryFn: () => getProfileScouting(profileId!, range), enabled: Boolean(profileId && isSupabaseConfigured) })
+export const useProfileComparison = (leftId: string | undefined, rightId: string | undefined, range: DossierRange) => useQuery({ queryKey: ['profile-comparison', leftId, rightId, range], queryFn: () => compareProfileDossiers(leftId!, rightId!, range), enabled: Boolean(leftId && rightId && leftId !== rightId && isSupabaseConfigured) })
 export function useBuildProfileRepertoireIndex(profileId: string) { return useMutation({ mutationFn: () => buildProfileRepertoireIndex(profileId) }) }

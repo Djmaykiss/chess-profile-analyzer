@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0 — Fase 3C.4
+
+- Añadidos RPCs de scouting, comparación privada y enfrentamientos directos resueltos por aliases de cuentas.
+- Añadidos paneles de scouting, preparación estadística, comparación y head-to-head al Dossier.
+
 ## 0.7.0 — Fase 3C.3
 
 - Añadido índice derivado `game_repertoire_moves` y cursor analítico reanudable por perfil.

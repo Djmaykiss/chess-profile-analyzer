@@ -50,6 +50,10 @@ El repertorio se deriva de la línea principal de los PGN mediante lotes reanuda
 
 Fase 3C.3 validada: el indice de Michael Perez contiene 10.459 partidas reales y 662.133 movimientos derivados. El proceso conserva su cursor y usa `UNIQUE(game_id, ply)` para permanecer idempotente sin alterar PGN ni partidas fuente.
 
+## Scouting y comparación (Fase 3C.4)
+
+El dossier incorpora scouting y comparación entre perfiles propios mediante RPCs `SECURITY INVOKER`. Las conclusiones incluyen resultados, frecuencia y etiqueta de confianza; los enfrentamientos directos resuelven aliases reales desde `chess_accounts`. No usa engine ni altera partidas importadas.
+
 ## Calidad
 
 ```bash

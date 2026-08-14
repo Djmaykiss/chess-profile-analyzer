@@ -5,6 +5,7 @@ import { classifyFirstMove, dossierRanges, EMPTY_DOSSIER, normalizeDossier, norm
 const migration = readFileSync(new URL('../supabase/migrations/202608120011_dossier_analytics.sql', import.meta.url), 'utf8')
 const openingsMigration = readFileSync(new URL('../supabase/migrations/202608120012_dossier_openings_trends.sql', import.meta.url), 'utf8')
 const scopeFixMigration = readFileSync(new URL('../supabase/migrations/202608120013_fix_dossier_scope_return.sql', import.meta.url), 'utf8')
+const scoutingMigration = readFileSync(new URL('../supabase/migrations/202608120016_dossier_scouting_comparison.sql', import.meta.url), 'utf8')
 const securityRequirements = ['security invoker', 'auth.uid()', 'Profile is not accessible to the current user', 'revoke all on function public.get_profile_dossier_summary(uuid, integer, timestamptz) from public, anon', 'grant execute on function public.get_profile_dossier_summary(uuid, integer, timestamptz) to authenticated']
 for (const requirement of securityRequirements) assert.ok(migration.includes(requirement), `Missing dossier security requirement: ${requirement}`)
 assert.ok(migration.includes('p_recent_limit is not null and p_date_from is not null'), 'Recent and date ranges must be mutually exclusive.')
@@ -41,5 +42,6 @@ assert.equal(trends.best_opening?.games, 12)
 assert.equal(trendLabel(trends.best_opening), 'C20 · King Pawn Game')
 assert.equal(trendLabel(null), 'Muestra insuficiente')
 assert.equal(trends.range_vs_history.win_rate_delta, 5)
+for (const required of ['get_profile_scouting', 'compare_profile_dossiers', 'security invoker', 'auth.uid()', 'from_5_to_9', 'evidencia fuerte', 'left_profile_id = right_profile_id', 'left_aliases', 'right_aliases', 'revoke all on function public.get_profile_scouting', 'grant execute on function public.compare_profile_dossiers']) assert.ok(scoutingMigration.includes(required), `Missing scouting/comparison requirement: ${required}`)
 
 console.log('Dossier analytics contract tests passed.')
