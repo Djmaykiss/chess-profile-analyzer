@@ -56,7 +56,7 @@ El dossier incorpora scouting y comparación entre perfiles propios mediante RPC
 
 ## Cola de análisis (Fase 3D.2)
 
-La base incorpora una cola segura para futuros análisis de Stockfish: solicitudes idempotentes por partida/configuración, cancelación, consulta de estado, caché por huella de PGN y contrato de claim/heartbeat para un worker futuro. Todavía no hay engine, worker ni análisis automático: una solicitud queda en cola hasta la fase posterior. El frontend no tiene permisos directos de escritura sobre jobs, análisis ni evaluaciones.
+Fase 3D.2 validada: la base incorpora una cola segura para futuros análisis de Stockfish, con solicitudes idempotentes por partida/configuración, cancelación, consulta de estado, caché por huella de PGN y contrato de claim/heartbeat para un worker futuro. Todavía no hay engine, worker ni análisis automático: una solicitud queda en cola hasta la fase posterior. El frontend no tiene permisos directos de escritura sobre jobs, análisis ni evaluaciones.
 
 ## Calidad
 
