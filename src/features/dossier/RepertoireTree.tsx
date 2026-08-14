@@ -25,6 +25,9 @@ export function RepertoireTree({ profileId, range }: { profileId: string; range:
   useEffect(() => {
     document.title = progress?.status === 'running' ? `Chess Profile Analyzer — Indexando ${progress.processedGames}` : progress?.status === 'completed' ? `Chess Profile Analyzer — Índice completo ${progress.processedGames}/${progress.indexedMoves}` : 'Chess Profile Analyzer'
   }, [progress?.processedGames, progress?.status])
+  useEffect(() => {
+    if (window.location.hash === '#repertoire') requestAnimationFrame(() => document.querySelector('.repertoire-section')?.scrollIntoView())
+  }, [])
   const runToCompletion = useCallback(async () => {
     if (running.current) return
     running.current = true
