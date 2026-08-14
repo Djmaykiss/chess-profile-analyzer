@@ -1,0 +1,4 @@
+export type Classification = 'forced' | 'best' | 'excellent' | 'good' | 'inaccuracy' | 'mistake' | 'blunder'
+export const CLASSIFICATION_VERSION = 'cpa-classification-v1'
+export function classifyCpLoss(loss: number, forced = false): Classification { if (forced) return 'forced'; if (loss <= 10) return 'best'; if (loss <= 25) return 'excellent'; if (loss <= 60) return 'good'; if (loss <= 120) return 'inaccuracy'; if (loss <= 250) return 'mistake'; return 'blunder' }
+export function classifyMateEvent(bestMateForPlayer: number | null, actualMateForPlayer: number | null): Classification { if (bestMateForPlayer !== null && bestMateForPlayer > 0 && (actualMateForPlayer === null || actualMateForPlayer <= 0)) return 'blunder'; if (bestMateForPlayer === null && actualMateForPlayer !== null && actualMateForPlayer < 0) return 'blunder'; return 'best' }

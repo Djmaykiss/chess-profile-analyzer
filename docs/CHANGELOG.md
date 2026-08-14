@@ -1,5 +1,11 @@
 # Changelog
 
+## Próximo — Fase 3D.3 en validación local
+
+- Añadido worker backend separado y Dockerfile reproducible para Stockfish 17.1 desde fuente oficial.
+- Añadidas políticas versionadas de perspectiva, mate, clasificación y accuracy estimada.
+- Sin análisis masivo ni despliegue permanente de worker.
+
 ## 0.9.0 — Fase 3D.2
 
 - Añadida infraestructura segura de cola para futuros análisis Stockfish: jobs, análisis versionados y evaluaciones por ply.

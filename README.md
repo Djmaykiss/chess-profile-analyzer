@@ -58,6 +58,10 @@ El dossier incorpora scouting y comparación entre perfiles propios mediante RPC
 
 Fase 3D.2 validada: la base incorpora una cola segura para futuros análisis de Stockfish, con solicitudes idempotentes por partida/configuración, cancelación, consulta de estado, caché por huella de PGN y contrato de claim/heartbeat para un worker futuro. Todavía no hay engine, worker ni análisis automático: una solicitud queda en cola hasta la fase posterior. El frontend no tiene permisos directos de escritura sobre jobs, análisis ni evaluaciones.
 
+## Worker Stockfish (Fase 3D.3)
+
+El worker backend aislado está en `worker/`. Compila Stockfish 17.1 desde fuente oficial y procesa un job a la vez con profundidad 16. Requiere secretos de backend exclusivamente en runtime; consulta [WORKER.md](docs/WORKER.md). No se habilita análisis masivo.
+
 ## Calidad
 
 ```bash
