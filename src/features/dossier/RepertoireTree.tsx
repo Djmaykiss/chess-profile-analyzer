@@ -22,6 +22,9 @@ export function RepertoireTree({ profileId, range }: { profileId: string; range:
   const tree = useMemo(() => { const map = new Map<string, RepertoireNode[]>(); nodes.forEach(node => { const parent = parentOf(node.move_sequence, node.ply); map.set(parent, [...(map.get(parent) ?? []), node]) }); return map }, [nodes])
 
   useEffect(() => setProgress(job ?? null), [job])
+  useEffect(() => {
+    document.title = progress?.status === 'running' ? `Chess Profile Analyzer — Indexando ${progress.processedGames}` : 'Chess Profile Analyzer'
+  }, [progress?.processedGames, progress?.status])
   const runToCompletion = useCallback(async () => {
     if (running.current) return
     running.current = true
