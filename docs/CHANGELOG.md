@@ -4,6 +4,7 @@
 
 - Añadidos RPCs de scouting, comparación privada y enfrentamientos directos resueltos por aliases de cuentas.
 - Añadidos paneles de scouting, preparación estadística, comparación y head-to-head al Dossier.
+- Validada la seguridad de los RPCs frente a anon y el uso exclusivo de datos reales, aliases de cuenta y muestras con confianza explícita.
 
 ## 0.7.0 — Fase 3C.3
 

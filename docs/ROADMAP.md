@@ -6,7 +6,7 @@ Fase 3C.2 en curso: aperturas reales, respuestas con negras por primera jugada y
 
 Fase 3C.3 validada: árbol de repertorio real derivado de la línea principal de PGN, con indexación reanudable por backend.
 
-Fase 3C.4 en validación: scouting estadístico, preparación sin engine, comparación y head-to-head entre perfiles propios. Stockfish continúa pendiente.
+Fase 3C.4 validada: scouting estadístico, preparación sin engine, comparación y head-to-head entre perfiles propios. Stockfish continúa pendiente.
 
 Actualización: Fases 3A y 3B están validadas y congeladas.
 
