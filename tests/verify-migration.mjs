@@ -8,6 +8,7 @@ const reconciliationSql = readFileSync(new URL('../supabase/migrations/202608120
 const variantRecoverySql = readFileSync(new URL('../supabase/migrations/202608120008_resume_djmaykiss_after_variant_page.sql', import.meta.url), 'utf8')
 const functionRolloutRecoverySql = readFileSync(new URL('../supabase/migrations/202608120009_reopen_djmaykiss_after_function_rollout.sql', import.meta.url), 'utf8')
 const timestampBoundaryRecoverySql = readFileSync(new URL('../supabase/migrations/202608120010_reconcile_djmaykiss_timestamp_boundary.sql', import.meta.url), 'utf8')
+const dossierSql = readFileSync(new URL('../supabase/migrations/202608120011_dossier_analytics.sql', import.meta.url), 'utf8')
 const edgeFunction = readFileSync(new URL('../supabase/functions/sync-chess-account/index.ts', import.meta.url), 'utf8')
 const required = [
   'alter table public.profiles enable row level security',
@@ -34,4 +35,7 @@ if (!functionRolloutRecoverySql.includes("WHERE id = '92431cbd-067a-4045-a503-bc
 if (!timestampBoundaryRecoverySql.includes("WHERE id = '92431cbd-067a-4045-a503-bc3a96f5ffe0'::uuid") || !timestampBoundaryRecoverySql.includes("platform = 'lichess'")) throw new Error('Djmaykiss timestamp recovery migration must remain narrowly scoped.')
 if (!edgeFunction.includes("Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')") || edgeFunction.includes('VITE_SUPABASE_SERVICE_ROLE_KEY')) throw new Error('service_role guardrail failed.')
 if (!edgeFunction.includes('x-client-info')) throw new Error('Edge Function CORS must allow the Supabase client header.')
+const dossierRequirements = ['games_profile_color_result_played_at_analytics_idx', 'games_profile_platform_speed_analytics_idx', 'create or replace function public.get_profile_dossier_summary', 'security invoker', 'p_recent_limit integer default null', 'p_date_from timestamptz default null', 'p_recent_limit is not null and p_date_from is not null', "p_recent_limit not in (20, 50, 100)", 'auth.uid()', 'revoke all on function public.get_profile_dossier_summary(uuid, integer, timestamptz) from public, anon', 'grant execute on function public.get_profile_dossier_summary(uuid, integer, timestamptz) to authenticated']
+const missingDossier = dossierRequirements.filter((item) => !dossierSql.includes(item))
+if (missingDossier.length) throw new Error(`Dossier analytics migration requirements missing: ${missingDossier.join(', ')}`)
 console.log('Migration security guardrails passed.')

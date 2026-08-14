@@ -34,6 +34,12 @@ Los historiales grandes de Lichess se procesan por páginas de 500 registros con
 
 La auditoría de Djmaykiss01 verificó 4.422 entradas estándar con PGN en la exportación oficial, de las cuales 4.413 son IDs de partida únicos (nueve entradas repetidas por la API). Persisten 4.413 partidas con PGN y cero duplicados.
 
+## Dossier (Fase 3C.1)
+
+La ruta privada `/dossier` presenta un resumen por perfil calculado por PostgreSQL sobre partidas reales: total, victorias, tablas, derrotas, porcentaje de victoria, color, plataforma y ritmo. Soporta rangos por cantidad (últimas 20, 50 o 100) o por tiempo (3 meses, 6 meses, 1 año o todo), sin cargar PGN ni miles de partidas en el navegador.
+
+La base de importación, sincronización, cursores, deduplicación y RLS de Fase 3B permanece congelada. Aperturas, repertorio, scouting, comparación y Stockfish quedan fuera de 3C.1.
+
 ## Calidad
 
 ```bash

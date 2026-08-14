@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 — Fase 3C.1
+
+- Añadido Dossier privado por perfil con agregados PostgreSQL de partidas reales.
+- Añadidos rangos excluyentes por cantidad (20, 50, 100) y tiempo (3, 6, 12 meses o todo).
+- Añadida migración 011 con índices analíticos y RPC `SECURITY INVOKER`, sin tocar importación, sincronización ni RLS de Fase 3B.
+
 ## 0.4.0 — Fase 3B validada
 
 - Añadida Edge Function `sync-chess-account` para importación real de Lichess y Chess.com.

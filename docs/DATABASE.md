@@ -1,5 +1,11 @@
 # Base de datos
 
+## Fase 3C.1: dossier analítico
+
+`202608120011_dossier_analytics.sql` añade únicamente dos índices de lectura sobre `games` y el RPC `get_profile_dossier_summary(target_profile_id, p_recent_limit, p_date_from)`. No modifica filas de partidas, `sync_runs`, RLS, grants existentes ni la Edge Function.
+
+El RPC es `SECURITY INVOKER`, exige `auth.uid()` y comprueba que el perfil solicitado pertenezca al usuario actual. Solo `authenticated` recibe `EXECUTE`; `anon` no recibe acceso. Los parámetros de rango son excluyentes: `p_recent_limit` admite solamente 20, 50 o 100 y usa orden estable de partidas; `p_date_from` cubre rangos temporales. Devuelve agregados de W/D/L, color, plataforma y ritmo como JSONB, sin entregar PGN al navegador.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.
