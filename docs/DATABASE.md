@@ -34,6 +34,8 @@ La migracion `202608120015_fix_repertoire_tree_output_aliases.sql` corrige exclu
 
 El contrato backend `claim_analysis_job()` usa `FOR UPDATE SKIP LOCKED`; `recover_stale_game_analysis_jobs()` deja preparada la recuperación por heartbeat. Ambos se conceden exclusivamente a `service_role` para el futuro worker, nunca al frontend. No existe todavía worker ni se ejecuta Stockfish.
 
+`202608120018_restrict_analysis_authenticated_grants.sql` revoca privilegios heredados no necesarios, incluido `TRUNCATE`, y deja a `authenticated` exclusivamente con `SELECT` sobre las tres tablas de análisis. RLS continúa filtrando las filas por propietario.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const migration = readFileSync(new URL('../supabase/migrations/202608120017_stockfish_analysis_queue.sql', import.meta.url), 'utf8')
+const grantsFix = readFileSync(new URL('../supabase/migrations/202608120018_restrict_analysis_authenticated_grants.sql', import.meta.url), 'utf8')
 const required = [
   'create table public.game_analysis_jobs', 'create table public.game_analysis', 'create table public.game_evaluations',
   "status in ('queued', 'running', 'completed', 'failed', 'cancel_requested', 'cancelled')", 'progress between 0 and 100', 'requested_depth between 8 and 30',
@@ -16,4 +17,5 @@ assert.ok(!migration.includes('grant insert on public.game_analysis_jobs to auth
 assert.ok(!migration.includes('grant insert on public.game_analysis to authenticated'), 'Frontend must not write analyses.')
 assert.ok(!migration.includes('grant insert on public.game_evaluations to authenticated'), 'Frontend must not write evaluations.')
 assert.ok(migration.includes("coalesce(engine_version, '')"), 'Nullable engine versions must be deduplicated deterministically.')
+assert.ok(grantsFix.includes('revoke all privileges on table public.game_analysis_jobs from authenticated') && grantsFix.includes('grant select on table public.game_analysis_jobs, public.game_analysis, public.game_evaluations to authenticated'), 'Authenticated must retain only SELECT on analysis tables.')
 console.log('Stockfish analysis queue contract tests passed.')
