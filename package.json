@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "lint": "tsc -b",
-    "test": "node tests/verify-migration.mjs && tsx tests/chess-platforms.test.mjs && tsx tests/chess-import.test.mjs && tsx tests/dossier.test.mjs && tsx tests/repertoire.test.mjs"
+    "test": "node tests/verify-migration.mjs && tsx tests/chess-platforms.test.mjs && tsx tests/chess-import.test.mjs && tsx tests/dossier.test.mjs && tsx tests/repertoire.test.mjs && node tests/analysis-queue.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

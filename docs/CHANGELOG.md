@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0 — Fase 3D.2
+
+- Añadida infraestructura segura de cola para futuros análisis Stockfish: jobs, análisis versionados y evaluaciones por ply.
+- Añadidos RPCs privados para solicitar, cancelar y consultar análisis sin escritura directa desde el frontend.
+- Preparado contrato backend de claim, heartbeat y recuperación de trabajos obsoletos, sin crear worker ni ejecutar engine.
+
 ## 0.8.0 — Fase 3C.4
 
 - Añadidos RPCs de scouting, comparación privada y enfrentamientos directos resueltos por aliases de cuentas.

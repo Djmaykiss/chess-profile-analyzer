@@ -26,6 +26,14 @@ La migracion `202608120015_fix_repertoire_tree_output_aliases.sql` corrige exclu
 
 `202608120016_dossier_scouting_comparison.sql` añade índices de lectura y los RPCs `get_profile_scouting` y `compare_profile_dossiers`. Ambos son `SECURITY INVOKER`, exigen sesión, reutilizan el alcance privado por perfil y revocan acceso a `anon`. La comparación exige dos perfiles distintos del mismo usuario y resuelve head-to-head mediante aliases de `chess_accounts`.
 
+## Fase 3D.2: cola segura de análisis
+
+`202608120017_stockfish_analysis_queue.sql` crea `game_analysis_jobs`, `game_analysis` y `game_evaluations`, sin modificar `games`, PGN, importación, sincronización ni `sync_runs`. Las tres tablas tienen RLS de lectura por perfil propietario. `authenticated` no recibe escritura directa; las solicitudes y cancelaciones pasan por RPCs acotados que validan `auth.uid()` y la propiedad de la partida.
+
+`request_game_analysis()` genera una huella determinista para profundidad 8–30 y las políticas `cpa-accuracy-v1` / `cpa-classification-v1`; reutiliza un job activo o un análisis compatible cuando corresponda. `cancel_game_analysis()` cancela trabajos en cola o solicita cancelación de trabajos en curso. `get_game_analysis_status()` solo muestra el estado de la partida propia.
+
+El contrato backend `claim_analysis_job()` usa `FOR UPDATE SKIP LOCKED`; `recover_stale_game_analysis_jobs()` deja preparada la recuperación por heartbeat. Ambos se conceden exclusivamente a `service_role` para el futuro worker, nunca al frontend. No existe todavía worker ni se ejecuta Stockfish.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.

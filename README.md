@@ -54,6 +54,10 @@ Fase 3C.3 validada: el indice de Michael Perez contiene 10.459 partidas reales y
 
 El dossier incorpora scouting y comparación entre perfiles propios mediante RPCs `SECURITY INVOKER`. Las conclusiones incluyen resultados, frecuencia y etiqueta de confianza; los enfrentamientos directos resuelven aliases reales desde `chess_accounts`. No usa engine ni altera partidas importadas.
 
+## Cola de análisis (Fase 3D.2)
+
+La base incorpora una cola segura para futuros análisis de Stockfish: solicitudes idempotentes por partida/configuración, cancelación, consulta de estado, caché por huella de PGN y contrato de claim/heartbeat para un worker futuro. Todavía no hay engine, worker ni análisis automático: una solicitud queda en cola hasta la fase posterior. El frontend no tiene permisos directos de escritura sobre jobs, análisis ni evaluaciones.
+
 ## Calidad
 
 ```bash
