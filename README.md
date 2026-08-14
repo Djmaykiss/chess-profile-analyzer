@@ -40,6 +40,10 @@ La ruta privada `/dossier` presenta un resumen por perfil calculado por PostgreS
 
 La base de importación, sincronización, cursores, deduplicación y RLS de Fase 3B permanece congelada. Aperturas, repertorio, scouting, comparación y Stockfish quedan fuera de 3C.1.
 
+## Aperturas y tendencias (Fase 3C.2)
+
+El Dossier incorpora aperturas reales con blancas y negras, respuestas con negras clasificadas desde la primera SAN real del PGN (`1.e4`, `1.d4`, `1.c4`, `1.Nf3` u otros) y tendencias basadas en una muestra mínima de 10 partidas. Las agregaciones se ejecutan en PostgreSQL; el navegador no descarga PGN masivos.
+
 ## Calidad
 
 ```bash

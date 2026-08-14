@@ -9,6 +9,7 @@ const variantRecoverySql = readFileSync(new URL('../supabase/migrations/20260812
 const functionRolloutRecoverySql = readFileSync(new URL('../supabase/migrations/202608120009_reopen_djmaykiss_after_function_rollout.sql', import.meta.url), 'utf8')
 const timestampBoundaryRecoverySql = readFileSync(new URL('../supabase/migrations/202608120010_reconcile_djmaykiss_timestamp_boundary.sql', import.meta.url), 'utf8')
 const dossierSql = readFileSync(new URL('../supabase/migrations/202608120011_dossier_analytics.sql', import.meta.url), 'utf8')
+const openingsTrendsSql = readFileSync(new URL('../supabase/migrations/202608120012_dossier_openings_trends.sql', import.meta.url), 'utf8')
 const edgeFunction = readFileSync(new URL('../supabase/functions/sync-chess-account/index.ts', import.meta.url), 'utf8')
 const required = [
   'alter table public.profiles enable row level security',
@@ -38,4 +39,7 @@ if (!edgeFunction.includes('x-client-info')) throw new Error('Edge Function CORS
 const dossierRequirements = ['games_profile_color_result_played_at_analytics_idx', 'games_profile_platform_speed_analytics_idx', 'create or replace function public.get_profile_dossier_summary', 'security invoker', 'p_recent_limit integer default null', 'p_date_from timestamptz default null', 'p_recent_limit is not null and p_date_from is not null', "p_recent_limit not in (20, 50, 100)", 'auth.uid()', 'revoke all on function public.get_profile_dossier_summary(uuid, integer, timestamptz) from public, anon', 'grant execute on function public.get_profile_dossier_summary(uuid, integer, timestamptz) to authenticated']
 const missingDossier = dossierRequirements.filter((item) => !dossierSql.includes(item))
 if (missingDossier.length) throw new Error(`Dossier analytics migration requirements missing: ${missingDossier.join(', ')}`)
+const openingsTrendsRequirements = ['games_profile_color_played_at_opening_analytics_idx', 'games_profile_speed_played_at_trend_analytics_idx', 'create or replace function public.get_profile_dossier_scoped_games', 'create or replace function public.get_profile_opening_stats', 'create or replace function public.get_profile_black_response_stats', 'create or replace function public.get_profile_dossier_trends', 'security invoker', "when 'e4' then '1.e4'", "when 'd4' then '1.d4'", "when 'c4' then '1.c4'", "when 'Nf3' then '1.Nf3'", "else 'Otros'", 'having count(*) >= 10', 'revoke all on function public.get_profile_opening_stats', 'grant execute on function public.get_profile_dossier_trends']
+const missingOpeningsTrends = openingsTrendsRequirements.filter((item) => !openingsTrendsSql.includes(item))
+if (missingOpeningsTrends.length) throw new Error(`Openings and trends migration requirements missing: ${missingOpeningsTrends.join(', ')}`)
 console.log('Migration security guardrails passed.')

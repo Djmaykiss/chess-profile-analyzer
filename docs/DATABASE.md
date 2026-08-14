@@ -6,6 +6,12 @@
 
 El RPC es `SECURITY INVOKER`, exige `auth.uid()` y comprueba que el perfil solicitado pertenezca al usuario actual. Solo `authenticated` recibe `EXECUTE`; `anon` no recibe acceso. Los parámetros de rango son excluyentes: `p_recent_limit` admite solamente 20, 50 o 100 y usa orden estable de partidas; `p_date_from` cubre rangos temporales. Devuelve agregados de W/D/L, color, plataforma y ritmo como JSONB, sin entregar PGN al navegador.
 
+## Fase 3C.2: aperturas y tendencias
+
+`202608120012_dossier_openings_trends.sql` añade índices de lectura y cuatro RPCs `SECURITY INVOKER`: el alcance privado reutilizable del dossier, estadísticas de aperturas por color, respuestas negras ante la primera SAN rival y tendencias. Cada función exige `auth.uid()`, valida el perfil propio y revoca `EXECUTE` de `PUBLIC` y `anon`; únicamente `authenticated` puede ejecutarlas.
+
+La primera jugada rival se extrae de los PGN en PostgreSQL de forma acotada, sin modificar el PGN ni `games`. Las tendencias de apertura exigen un mínimo de 10 partidas. La migración no altera importación, sincronización, RLS existente, grants existentes, `sync_runs` ni datos.
+
 ## Fase 3B aplicada y validada
 
 `202608120003_games_and_sync_runs.sql` crea `games` y `sync_runs`. Deduplica por `account_id + platform + external_game_id`, conserva el PGN original en `pgn`, habilita RLS de lectura por propietario y concede solamente SELECT a `authenticated` para Data API. `get_profile_basic_stats()` concede solamente EXECUTE a `authenticated`; el frontend no tiene escritura directa en estas tablas.

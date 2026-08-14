@@ -2,6 +2,8 @@
 
 Fase 3C.1 en curso: resumen agregado seguro por perfil y rangos por cantidad o tiempo. Aperturas, repertorio, scouting, comparación y Stockfish permanecen pendientes.
 
+Fase 3C.2 en curso: aperturas reales, respuestas con negras por primera jugada y tendencias con muestra mínima. Repertorio, scouting, comparación avanzada y Stockfish continúan pendientes.
+
 Actualización: Fases 3A y 3B están validadas y congeladas.
 
 1. Base visual y navegación: completada.

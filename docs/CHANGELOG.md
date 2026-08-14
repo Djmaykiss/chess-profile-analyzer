@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0 — Fase 3C.2
+
+- Añadidas estadísticas de aperturas reales por color, con ECO, nombre, W/D/L y win rate.
+- Añadido análisis de respuestas con negras basado en la primera SAN real del PGN.
+- Añadidas tendencias de apertura, color y ritmo con muestra mínima de 10 partidas.
+- Añadida migración 012 con RPCs de solo lectura `SECURITY INVOKER` y sin cambios en Fase 3B.
+
 ## 0.5.0 — Fase 3C.1
 
 - Añadido Dossier privado por perfil con agregados PostgreSQL de partidas reales.
