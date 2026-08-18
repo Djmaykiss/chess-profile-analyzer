@@ -11,3 +11,4 @@
 9. Todo cambio de base de datos usa migraciones. La UI debe ser responsive y la lógica de análisis no vive en componentes visuales.
 10. La verificación de cuentas se basa exclusivamente en respuestas válidas de APIs públicas; nunca marcar una cuenta como verificada con datos inventados.
 11. FASE 3B — VALIDADA Y CONGELADA. No modificar importación, sincronización, streaming, paginación, cursor, backfill, normalización, deduplicación, timestamps, RLS, grants ni flujo de sync_runs salvo solicitud explícita del usuario. Trabajar únicamente sobre el requisito solicitado y no alterar componentes ya validados.
+12. Las cards de Cuentas deben ser fluidas por el ancho real de su contenedor y no depender de breakpoints rígidos que puedan comprimir usernames.
