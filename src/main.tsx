@@ -2,7 +2,7 @@ import { FormEvent, ReactNode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { BarChart3, Bell, BookOpen, ChevronLeft, ChevronRight, CircleHelp, CircleUserRound, Crown, Eye, EyeOff, LayoutDashboard, LogOut, Menu, Plus, Search, Settings, Swords, Trash2, X } from 'lucide-react'
+import { Bell, ChevronLeft, ChevronRight, CircleUserRound, Eye, EyeOff, Plus, Search, Settings, Swords, Trash2, X } from 'lucide-react'
 import { signIn, signOut, signUp } from './services/auth.service'
 import { isSupabaseConfigured, supabase } from './services/supabase'
 import { Profile, ProfileType } from './services/profiles.service'
@@ -13,10 +13,13 @@ import { useGames, useProfileBasicStats, useSyncAllChessAccounts, useSyncChessAc
 import { ChessGame, GameFilters } from './services/chess-import/games.service'
 import { DossierPage } from './features/dossier/DossierPage'
 import { AnalysisRequestButton } from './features/analysis/AnalysisRequestButton'
+import { AppSidebar } from './components/AppSidebar'
+import { MobileNav } from './components/MobileNav'
+import { MobileMenuButton } from './components/MobileMenuButton'
+import { primaryNavigation } from './components/app-navigation'
 import './styles.css'
 
 const queryClient = new QueryClient()
-const nav = [['Resumen', '/', LayoutDashboard], ['Perfiles', '/profiles', CircleUserRound], ['Cuentas', '/accounts', Swords], ['Partidas', '/games', Search], ['Dossier', '/dossier', BookOpen], ['Estadísticas', '/statistics', BarChart3], ['Aperturas', '/openings', Crown], ['Configuración', '/settings', Settings]] as const
 
 function Root() { return <QueryClientProvider client={queryClient}><BrowserRouter><AuthGate /></BrowserRouter></QueryClientProvider> }
 function AuthGate() {
@@ -29,13 +32,14 @@ function PublicApp() { const location = useLocation(); return location.pathname 
 function PrivateApp({ onSignOut }: { onSignOut: () => void }) { const location = useLocation(); return location.pathname === '/login' || location.pathname === '/register' ? <Navigate to="/" replace /> : <App onSignOut={onSignOut} /> }
 
 function App({ onSignOut }: { onSignOut: () => void }) {
-  const navigate = useNavigate(); const location = useLocation(); const { data: profiles = [], isLoading, error } = useProfiles(); const [activeId, setActiveId] = useState<string | null>(null); const [dialog, setDialog] = useState<'profile' | 'account' | null>(null)
+  const navigate = useNavigate(); const location = useLocation(); const { data: profiles = [], isLoading, error } = useProfiles(); const [activeId, setActiveId] = useState<string | null>(null); const [dialog, setDialog] = useState<'profile' | 'account' | null>(null); const [mobileNavOpen, setMobileNavOpen] = useState(false)
   useEffect(() => { if (!activeId && profiles[0]) setActiveId(profiles[0].id); if (activeId && !profiles.some(p => p.id === activeId)) setActiveId(profiles[0]?.id ?? null) }, [profiles, activeId])
   const active = profiles.find(p => p.id === activeId) ?? null
-  const current = nav.find(([, path]) => path === location.pathname)?.[0] ?? 'Resumen'
+  const current = primaryNavigation.find(item => item.path === location.pathname)?.label ?? (location.pathname === '/help' ? 'Ayuda' : 'Resumen')
   const logout = async () => { try { await signOut() } finally { onSignOut(); navigate('/login') } }
+  const visit = (path: string) => navigate(path)
   if (!isSupabaseConfigured) return <Configuration />
-  return <div className="app-shell"><aside className="sidebar"><div className="brand"><span className="knight">♞</span><span>CHESS<span className="muted">/</span>PROFILE</span></div><div className="profile-switcher"><span className="eyebrow">PERFIL ACTIVO</span><select className="active-profile select-reset" value={activeId ?? ''} onChange={e => setActiveId(e.target.value)}><option value="" disabled>Selecciona un perfil</option>{profiles.map(p => <option value={p.id} key={p.id}>{p.display_name}</option>)}</select></div><nav>{nav.map(([name, path, Icon]) => <button key={name} className={current === name ? 'selected' : ''} onClick={() => navigate(path)}><Icon size={18}/>{name}</button>)}</nav><div className="sidebar-bottom"><button><CircleHelp size={18}/>Ayuda</button><button onClick={logout}><LogOut size={18}/>Cerrar sesión</button></div></aside><main><header><div className="crumb"><span>Mis perfiles</span><ChevronRight size={15}/><strong>{active?.display_name ?? 'Sin perfil'}</strong></div><div className="header-actions"><button className="icon"><Bell size={19}/></button><div className="avatar">CP</div></div></header>{isLoading ? <Loading /> : error ? <ErrorState error={error.message} /> : <Page page={current} active={active} profiles={profiles} choose={setActiveId} addProfile={() => setDialog('profile')} addAccount={() => setDialog('account')} />}</main>{dialog === 'profile' && <ProfileDialog onClose={() => setDialog(null)} />}{dialog === 'account' && active && <AccountDialog profileId={active.id} onClose={() => setDialog(null)} />}</div>
+  return <div className="app-shell"><AppSidebar profiles={profiles} activeId={activeId} currentPath={location.pathname} onChooseProfile={setActiveId} onNavigate={visit} onLogout={logout}/><MobileNav open={mobileNavOpen} profiles={profiles} activeId={activeId} currentPath={location.pathname} onClose={() => setMobileNavOpen(false)} onChooseProfile={setActiveId} onNavigate={visit} onLogout={logout}/><main><header><div className="header-leading"><MobileMenuButton open={mobileNavOpen} onClick={() => setMobileNavOpen(open => !open)}/><div className="crumb"><span>Mis perfiles</span><ChevronRight size={15}/><strong>{active?.display_name ?? 'Sin perfil'}</strong></div></div><div className="header-actions"><button className="icon notification-button" aria-label="Notificaciones"><Bell size={19}/></button><div className="avatar" aria-label="Chess Profile">CP</div></div></header>{isLoading ? <Loading /> : error ? <ErrorState error={error.message} /> : <Page page={current} active={active} profiles={profiles} choose={setActiveId} addProfile={() => setDialog('profile')} addAccount={() => setDialog('account')} />}</main>{dialog === 'profile' && <ProfileDialog onClose={() => setDialog(null)} />}{dialog === 'account' && active && <AccountDialog profileId={active.id} onClose={() => setDialog(null)} />}</div>
 }
 function Page({ page, active, profiles, choose, addProfile, addAccount }: { page: string; active: Profile | null; profiles: Profile[]; choose: (id: string) => void; addProfile: () => void; addAccount: () => void }) { if (page === 'Perfiles') return <Profiles profiles={profiles} activeId={active?.id} onOpen={choose} onNew={addProfile} />; if (page === 'Cuentas') return active ? <Accounts profile={active} onAdd={addAccount} /> : <EmptyProfiles onCreate={addProfile} />; if (page === 'Partidas') return active ? <Games profile={active} /> : <EmptyProfiles onCreate={addProfile} />; if (page === 'Dossier') return <DossierPage profiles={profiles} activeProfile={active} onSelectProfile={choose} />; if (page === 'Resumen') return active ? <Dashboard profile={active} onAccounts={addAccount} /> : <EmptyProfiles onCreate={addProfile} />; return <Placeholder page={page} /> }
 function Auth({ registering }: { registering: boolean }) {
