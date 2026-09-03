@@ -62,6 +62,10 @@ Fase 3D.2 validada: la base incorpora una cola segura para futuros análisis de 
 
 El worker backend aislado está en `worker/`. Compila Stockfish 17.1 desde fuente oficial y procesa un job a la vez con profundidad 16. Requiere secretos de backend exclusivamente en runtime; consulta [WORKER.md](docs/WORKER.md). No se habilita análisis masivo.
 
+## Visualización de análisis (Fase 3D.4)
+
+El detalle de una partida con análisis persistido muestra el resumen de Stockfish, profundidad, fecha, accuracy estimada, clasificaciones, evaluaciones por jugada, posiciones críticas y la variación principal. Los datos se leen exclusivamente desde `game_analysis` y `game_evaluations` bajo RLS; abrir una partida no solicita ni ejecuta un nuevo análisis.
+
 ## Calidad
 
 ```bash

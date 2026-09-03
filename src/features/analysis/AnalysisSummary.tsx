@@ -1,0 +1,7 @@
+import { AnalysisRecord, GameEvaluation } from './analysis.types'
+import { classificationLabels } from './analysis-formatters'
+
+export function AnalysisSummary({ analysis, evaluations }: { analysis: AnalysisRecord; evaluations: GameEvaluation[] }) {
+  const counts = evaluations.reduce<Record<string, number>>((all, item) => { if (item.classification) all[item.classification] = (all[item.classification] ?? 0) + 1; return all }, {})
+  return <section className="analysis-panel" aria-label="Resumen del análisis"><div className="analysis-heading"><div><p className="eyebrow">ANÁLISIS PERSISTIDO</p><h3>{analysis.engine === 'stockfish' ? 'Stockfish' : analysis.engine} {analysis.engine_version ?? ''}</h3><p>Profundidad {analysis.depth} · {new Date(analysis.analyzed_at).toLocaleDateString()}</p></div><span className="analysis-count">{evaluations.length} posiciones</span></div><div className="accuracy-grid"><div><span>Blancas</span><strong>{analysis.accuracy_white === null ? '—' : analysis.accuracy_white.toFixed(1)}</strong></div><div><span>Negras</span><strong>{analysis.accuracy_black === null ? '—' : analysis.accuracy_black.toFixed(1)}</strong></div></div><p className="analysis-disclaimer">Accuracy estimada por Chess Profile Analyzer. Métrica propia de Chess Profile Analyzer. No equivale a Chess.com ni Lichess.</p><div className="classification-summary">{Object.entries(classificationLabels).map(([key, label]) => <span className={`classification-chip ${key}`} key={key}><b>{counts[key] ?? 0}</b>{label}</span>)}</div></section>
+}

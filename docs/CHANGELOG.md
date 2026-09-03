@@ -80,3 +80,8 @@
 - Creada la aplicación React/TypeScript/Vite.
 - Implementados login y registro demostrativos, dashboard, perfiles y cuentas.
 - Añadida documentación de producto y arquitectura.
+## 0.11.0 — Fase 3D.4
+
+- Añadida visualización de análisis Stockfish persistidos en el detalle de partida.
+- Añadidos resumen de accuracy estimada, clasificaciones, lista filtrable de evaluaciones, posiciones críticas y detalle por jugada con FEN/PV.
+- La interfaz usa únicamente lecturas de `game_analysis` y `game_evaluations`; no dispara análisis automáticamente.
