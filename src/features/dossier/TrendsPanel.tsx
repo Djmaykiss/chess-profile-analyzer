@@ -1,8 +1,9 @@
 import { DossierRange, TrendItem } from './dossier.types'
 import { trendLabel } from './dossier-formatters'
+import { openingLabels } from './opening-labels'
 import { useProfileDossierTrends } from './dossier.hooks'
 
-function Trend({ title, item }: { title: string; item: TrendItem | null }) { return <div className="trend-item"><span>{title}</span><strong>{trendLabel(item)}</strong>{item ? <small>{item.games} partidas · {item.win_rate}% victorias</small> : <small>Se requieren al menos 10 partidas.</small>}</div> }
+function Trend({ title, item }: { title: string; item: TrendItem | null }) { const label = item?.opening ? (() => { const opening = openingLabels(item.eco, item.opening); return `${opening.eco} · ${opening.opening}` })() : trendLabel(item); return <div className="trend-item"><span>{title}</span><strong>{label}</strong>{item ? <small>{item.games} partidas · {item.win_rate}% victorias</small> : <small>Se requieren al menos 10 partidas.</small>}</div> }
 
 export function TrendsPanel({ profileId, range }: { profileId: string; range: DossierRange }) {
   const { data, isLoading, error } = useProfileDossierTrends(profileId, range)

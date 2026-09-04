@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { DossierRange, ProfileScouting, ScoutingEvidence } from './dossier.types'
 import { useProfileScouting } from './dossier.hooks'
+import { openingLabels } from './opening-labels'
 
-const EvidenceList = ({ title, rows }: { title: string; rows: ScoutingEvidence[] }) => <div className="scouting-block"><h3>{title}</h3>{rows.length ? <ul>{rows.slice(0, 5).map((row, index) => <li key={`${row.move_sequence ?? row.opening ?? row.label}-${index}`}><strong>{row.move_sequence ?? row.san ?? `${row.eco ?? '—'} · ${row.opening ?? row.label ?? 'Sin nombre'}`}</strong><span>{row.games} partidas · {row.wins}V/{row.draws}T/{row.losses}D · {row.win_rate}% · {row.confidence}</span></li>)}</ul> : <p className="subtle-copy">Muestra insuficiente.</p>}</div>
+const EvidenceList = ({ title, rows }: { title: string; rows: ScoutingEvidence[] }) => <div className="scouting-block"><h3>{title}</h3>{rows.length ? <ul>{rows.slice(0, 5).map((row, index) => { const labels = openingLabels(row.eco, row.opening ?? row.label); return <li key={`${row.move_sequence ?? row.opening ?? row.label}-${index}`}><strong>{row.move_sequence ?? row.san ?? `${labels.eco} · ${labels.opening}`}</strong><span>{row.games} partidas · {row.wins}V/{row.draws}T/{row.losses}D · {row.win_rate}% · {row.confidence}</span></li> })}</ul> : <p className="subtle-copy">Muestra insuficiente.</p>}</div>
 
 export function ScoutingPanel({ profileId, range, rival }: { profileId: string; range: DossierRange; rival: boolean }) {
   const { data, isLoading, error } = useProfileScouting(profileId, range)

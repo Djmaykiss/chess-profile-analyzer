@@ -1,5 +1,6 @@
 import { Platform } from '../chess-accounts.service'
 import { requireSupabase } from '../supabase'
+export { gameMatchesFilters, gamesQueryKey } from './game-scope'
 
 export type GameResult = 'win' | 'draw' | 'loss'
 export type PlayerColor = 'white' | 'black'
