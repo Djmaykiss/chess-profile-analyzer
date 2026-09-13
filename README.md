@@ -66,6 +66,8 @@ El worker backend aislado está en `worker/`. Compila Stockfish 17.1 desde fuent
 
 El detalle de una partida con análisis persistido muestra el resumen de Stockfish, profundidad, fecha, accuracy estimada, clasificaciones, evaluaciones por jugada, posiciones críticas y la variación principal. Los datos se leen exclusivamente desde `game_analysis` y `game_evaluations` bajo RLS; abrir una partida no solicita ni ejecuta un nuevo análisis.
 
+Las partidas con un análisis completado también pueden descargar un PGN nuevo y anotado. Incluye comentarios por jugada, evaluaciones, pérdidas, líneas principales que se pueden verificar desde el FEN persistido y sugerencias de estudio. El PGN original permanece intacto; la accuracy es una métrica propia de Chess Profile Analyzer y no equivale a la de Chess.com ni Lichess.
+
 ## Calidad
 
 ```bash

@@ -85,3 +85,7 @@
 - Añadida visualización de análisis Stockfish persistidos en el detalle de partida.
 - Añadidos resumen de accuracy estimada, clasificaciones, lista filtrable de evaluaciones, posiciones críticas y detalle por jugada con FEN/PV.
 - La interfaz usa únicamente lecturas de `game_analysis` y `game_evaluations`; no dispara análisis automáticamente.
+# Exportación de PGN analizado
+
+- Añadida descarga local de PGN anotado para cualquier partida de Lichess o Chess.com que ya tenga un análisis Stockfish persistido.
+- El export conserva el PGN fuente, añade comentarios, pérdidas de evaluación, variantes verificadas cuando la línea principal UCI es legal y sugerencias de estudio; no solicita ni ejecuta el motor.

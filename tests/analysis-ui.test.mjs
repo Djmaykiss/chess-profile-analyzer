@@ -7,6 +7,7 @@ const detail = readFileSync(new URL('../src/features/analysis/MoveAnalysisDetail
 const summary = readFileSync(new URL('../src/features/analysis/AnalysisSummary.tsx', import.meta.url), 'utf8')
 
 assert.ok(service.includes("from('game_analysis')") && service.includes("from('game_evaluations')"), 'UI must read persisted analysis data only.')
+assert.ok(readFileSync(new URL('../src/features/analysis/GameAnalysisPanel.tsx', import.meta.url), 'utf8').includes('DownloadAnnotatedPgnButton'), 'Completed analysis should offer an annotated PGN download.')
 assert.ok(!/\.insert\(|\.update\(|service_role/i.test(service), 'Analysis presentation must not write results or expose backend credentials.')
 assert.ok(panel.includes('status.status !== \'completed\'') && panel.includes('AnalysisRequestButton'), 'Queued/running states must retain the existing request UI.')
 assert.ok(summary.includes('Accuracy estimada por Chess Profile Analyzer') && summary.includes('No equivale a Chess.com ni Lichess'), 'Accuracy disclaimer must stay visible.')
